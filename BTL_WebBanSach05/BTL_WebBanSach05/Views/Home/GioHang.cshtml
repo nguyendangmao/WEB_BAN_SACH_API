@@ -1,0 +1,328 @@
+﻿
+@{
+    ViewBag.Title = "GioHang";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/styles/bootstrap4/bootstrap.min.css" rel="stylesheet" />
+<link href="~/Content/plugins/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet" />
+<link href="~/Content/plugins/OwlCarousel2-2.2.1/owl.carousel.css" rel="stylesheet" />
+<link href="~/Content/plugins/OwlCarousel2-2.2.1/owl.theme.default.css" rel="stylesheet" />
+<link href="~/Content/plugins/OwlCarousel2-2.2.1/animate.css" rel="stylesheet" />
+<link href="~/Content/plugins/themify-icons/themify-icons.css" rel="stylesheet" />
+<link href="~/Content/plugins/jquery-ui-1.12.1.custom/jquery-ui.css" rel="stylesheet" />
+<link href="~/Content/styles/contact_responsive.css" rel="stylesheet" />
+<link href="~/Content/styles/contact_styles.css" rel="stylesheet" />
+
+<style>
+    .deletebtn:hover{
+        color: red;
+    }
+</style>
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            GetGH(@ViewBag.idKhach);
+        });
+        let t = 0;
+        let sumsl = 0;
+
+        function GetGH(idk) {
+            $.ajax({
+                url: "https://localhost:44357/api/SachClient?idKH=" + idk,
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let table = '<tr>';
+
+                    for (var i = 0; i < len; ++i) {
+                        t += reponse[i].SL * reponse[i].giaban;
+                        sumsl += reponse[i].SL;
+                        table = table +
+                            '<td>' + (i + 1) + '</td>' +
+                            '<td><img src="https://localhost:44357/Areas/Admin/Image/' + reponse[i].TenAnh + '" style="width: 50px; height: 50px;"></td>' +
+                            '<td>' + reponse[i].TenSanPham + '</td>' +
+                            '<td><button style="color: white; background-color: gray; width: 30px; height: 25px; margin-right: 10px; border: none; cursor: pointer;" onclick="updateGH(' + reponse[i].Id_GH + ', ' + idk + ', ' + reponse[i].MaSanPham + ', ' + (reponse[i].SL - 1) + ')">-</button> ' + reponse[i].SL + '' +
+                            '<button style = "color: white; background-color: gray; border: none; width: 30px; height: 25px; margin-left: 10px; cursor: pointer;" onclick="updateGH(' + reponse[i].Id_GH + ', ' + idk + ', ' + reponse[i].MaSanPham + ', ' + (reponse[i].SL+1) + ')"> +</button ></td > ' +
+                            '<td>' + (reponse[i].giaban) + '</td>' +
+                            '<td>' + (reponse[i].giaban * reponse[i].SL) + '</td>' +
+                            '<td><div  class="deletebtn" style="cursor: pointer; padding-left: 30px;" onclick=(deleteSP(' + reponse[i].Id_GH + '))><i class="fa fa-remove"></i></div></td>' +
+                            '</tr> ';
+                    }
+
+                    document.getElementById('ct_dh').innerHTML = table;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+
+        function updateGH(idgh, idk, masach, sl) {
+            var url = 'https://localhost:44357/api/SachClient?idGH=' + idgh + '&idKH='+ idk +'&MaSach=' + masach + '&Soluong=' + sl;
+
+            $.ajax({
+                url: url,
+                method: 'PUT',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                    alert("Cập nhật không thành công! Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+                },
+                success: function (reponse) {
+                    if (reponse == true) {
+                        t = 0;
+                        sumsl = 0;
+                        GetGH(@ViewBag.idKhach);
+                    }
+                    else {
+                        alert("Cập nhật giỏ hàng không thành công! Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng!");
+                    }
+                }
+            });
+        }
+
+        function deleteSP(id) {
+            if (confirm("Bạn có muốn xóa sản phẩm này không?") == true) {
+                var url = 'https://localhost:44357/api/SachClient?idGH=' + id
+                $.ajax({
+                    url: url,
+                    method: 'DELETE',
+                    contentType: 'json',
+                    dataType: 'json',
+                    error: function (response) {
+                        alert("Xóa không thành công");
+                    },
+                    success: function (reponse) {
+                        alert("Xóa thành công");
+                        t = 0;
+                        sumsl = 0;
+                        GetGH(@ViewBag.idKhach);
+                    }
+                });
+            }
+        }
+
+        function tong() {
+            var tt = '<label for="fname">' + t + '</label>';
+            document.getElementById('tongtien').innerHTML = tt;
+        }
+
+        function tt() {
+            var tt = '<label for="fname">' + sumsl + '</label>';
+            document.getElementById('soluong').innerHTML = tt;
+            tong();
+        }
+
+        function insertHDB(id) {
+
+            var url = 'https://localhost:44357/api/HDB?idKH=@ViewBag.idKH';
+            $.ajax({
+                url: url,
+                method: 'POST',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                    alert("Đặt hàng không thành công!");
+                },
+                success: function (reponse) {
+                    if (reponse === true) {
+                        alert("Đặt hàng thành công!");
+                    }
+                    else {
+                        alert("Đặt hàng không thành công!");
+                    }
+                    window.location.href = 'https://localhost:44357/Home/GioHang?idKH=' + @ViewBag.idKhach;
+                }
+            });
+        }
+
+    </script>
+}
+
+<header class="header trans_300">
+
+    <!-- Top Navigation -->
+
+    <div class="top_nav">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="top_nav_left">free shipping on all u.s orders over $50</div>
+                </div>
+                <div class="col-md-6 text-right">
+                    <div class="top_nav_right">
+                        <ul class="top_nav_menu">
+
+                            <!-- Currency / Language / My Account -->
+
+                            <li class="account">
+                                <a href="#">
+                                    My Account
+                                    <i class="fa fa-angle-down"></i>
+                                </a>
+                                <ul class="account_selection">
+                                    <li><a href="@Url.Action("DangNhap", "NguoiDung")"><i class="fa fa-sign-in" aria-hidden="true"></i>Sign In</a></li>
+                                    <li><a href="https://localhost:44357/Home/Log"><i class="fa fa-sign-out" aria-hidden="true"></i>Sign out</a></li>
+                                    <li><a href="@Url.Action("DangKy", "NguoiDung")"><i class="fa fa-user-plus" aria-hidden="true"></i>Register</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+
+    <div class="main_nav_container">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-right">
+                    <div class="logo_container">
+                        <a href="#">book<span>shop</span></a>
+                        <p>@ViewBag.HT</p>
+                    </div>
+                    <nav class="navbar">
+                        <ul class="navbar_menu">
+                            <li><a href="@Url.Action("Index")">home</a></li>
+                            <li><a href="@Url.Action("Contact")">contact</a></li>
+                        </ul>
+                        <ul class="navbar_user">
+                            <li><a href="@Url.Action("Filter")"><i class="fa fa-search" aria-hidden="true"></i></a></li>
+                            <li><a href="https://localhost:44357/Home/TTKhach?idKH=@ViewBag.IdKH"><i class="fa fa-user" aria-hidden="true"></i></a></li>
+                            <li class="checkout">
+                                <a href="https://localhost:44357/Home/GioHang?idKH=@ViewBag.IdKH">
+                                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+                                    <span id="checkout_items" class="checkout_items">2</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="hamburger_container">
+                            <i class="fa fa-bars" aria-hidden="true"></i>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container contact_container">
+    <div class="row">
+        <div class="col">
+
+            <!-- Breadcrumbs -->
+
+            <div class="breadcrumbs align-items-center">
+                <p style="text-align:center; font-size: 16px; margin-top: 20px; color: orangered">Giỏ hàng</p>
+                <p style="text-align:center; font-size: 12px; color: mediumslateblue">@ViewBag.ThongBao</p>
+            </div>
+
+        </div>
+    </div>
+
+    <div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Hình ảnh</th>
+                    <th>Tên sách</th>
+                    <th>Số lượng</th>
+                    <th>Giá bán</th>
+                    <th>Thành tiền</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="ct_dh">
+            </tbody>
+        </table>
+    </div>
+    <div><button onclick="tt()" data-toggle="modal" data-target="#myModal" style="color: white; background-color: orangered; float: right; margin-top: 20px; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">Đặt hàng</button></div>
+</div>
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="tittelModal">
+                    <h5 style="text-align: center; margin-bottom: 20px;">Thông tin đơn hàng</h5>
+                </div>
+                <div class="container">
+                    <form action="">
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="fname">Họ tên:</label>
+                            </div>
+                            <div class="col-6">
+                                <label for="fname">@ViewBag.hoTen</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="fname">Số điện thoại:</label>
+                            </div>
+                            <div class="col-6">
+                                <label for="fname">@ViewBag.SDT</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="fname">Địa chỉ:</label>
+                            </div>
+                            <div class="col-6">
+                                <label for="fname">@ViewBag.DiaChi</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="fname">Số lượng (quyển):</label>
+                            </div>
+                            <div class="col-6" id="soluong">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="fname">Thành tiền (đ):</label>
+                            </div>
+                            <div class="col-6" id="tongtien">
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="fname">Hình thức thanh toán:</label>
+                            </div>
+                            <div class="col-6">
+                                <label for="fname">Thanh toán khi nhận hàng</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <input type="submit" value="Đặt hàng" onclick="insertHDB(@ViewBag.idKhach)" style="color: white; background-color: orangered; float: right; margin-top: 20px; border: none; padding: 8px; border-radius: 5px; cursor: pointer;">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/Content/js/jquery-3.2.1.min.js"></script>
+<script src="~/Content/styles/bootstrap4/popper.js"></script>
+<script src="~/Content/styles/bootstrap4/bootstrap.min.js"></script>
+<script src="~/Content/plugins/Isotope/isotope.pkgd.min.js"></script>
+<script src="~/Content/plugins/OwlCarousel2-2.2.1/owl.carousel.js"></script>
+<script src="~/Content/plugins/easing/easing.js"></script>
+<script src="~/Content/plugins/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+<script src="~/Content/js/contact_custom.js"></script>
+

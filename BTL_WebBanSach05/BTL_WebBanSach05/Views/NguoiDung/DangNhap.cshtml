@@ -1,0 +1,30 @@
+﻿@model BTL_WebBanSach05.Models.TAIKHOANADMIN
+
+@{
+    ViewBag.Title = "DangNhapAdmin";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutDangKy.cshtml";
+}
+
+@using (@Html.BeginForm("DangNhap", "NguoiDung", FormMethod.Post, htmlAttributes: new { @class = "form", @id = "form" }))
+{
+    <h1>Đăng nhập</h1>
+    @ViewBag.ThongBao
+    <form name="login" onsubmit="return validateForm()" action="">
+        <div class="txt_field">
+            <input name="name" type="text" required="">
+            <span></span>
+            <label>Số điện thoại</label>
+        </div>
+        <div class="txt_field">
+            <input name="password" type="password" required="">
+            <span></span>
+            <label>Mật khẩu</label>
+        </div>
+        <div class="pass">Quên mật khẩu?</div>
+        <input type="submit" value="Đăng nhập">
+        <div class="signup_link">
+            <a href="@Url.Action("../Home/index")">Quay lại</a> / <a href="#">@Html.ActionLink("Đăng Ký", "DangKy")</a>
+        </div>
+    </form>
+}
+

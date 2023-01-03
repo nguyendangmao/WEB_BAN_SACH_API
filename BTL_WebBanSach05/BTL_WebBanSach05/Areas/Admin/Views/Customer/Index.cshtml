@@ -1,0 +1,117 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_customer.cshtml";
+}
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            GetKH();
+        });
+        function GetKH() {
+            $.ajax({
+                url: 'https://localhost:44357/api/khachhangapi',
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let table = '<tr>';
+                    for (var i = 0; i < len; ++i) {
+                        table = table +
+                            '<th scope="row">' + reponse[i].ID_KHACHHANG + '</th>' +
+                            '<td>' + reponse[i].HOTENKH + '</td>' +
+                            '<td>' + reponse[i].SDT_KH + '</td>' +
+                            '<td>' + reponse[i].DIACHI + '</td>' +
+                            '<td><a href="https://localhost:44357/Admin/Customer/CTKhachHang/' + reponse[i].ID_KHACHHANG + '" class="ChiTietHD">Xem chi tiết</a></td></tr>';
+                    }
+                    document.getElementById('khachhang').innerHTML = table;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+    </script>
+
+    <script type="text/javascript">
+        function GetKHSearch(id) {
+            $.ajax({
+                url: 'https://localhost:44357/api/khachhangapi/' + id,
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let table = '<tr>';
+                    for (var i = 0; i < len; ++i) {
+                        table = table +
+                            '<th scope="row">' + reponse[i].ID_KHACHHANG + '</th>' +
+                            '<td>' + reponse[i].HOTENKH + '</td>' +
+                            '<td>' + reponse[i].SDT_KH + '</td>' +
+                            '<td>' + reponse[i].DIACHI + '</td>' +
+                            '<td><a href="@Url.Action("CTKhachHang")" class="ChiTietHD">Xem chi tiết</a></td></tr>';
+                    }
+                    document.getElementById('khachhang').innerHTML = table;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+        $("input[name='search']").change(function () {
+            GetKHSearch($(this).val());
+        });
+    </script>
+}
+<link href="~/Areas/Admin/Content/style/styleKH.css" rel="stylesheet" />
+<!-- Content Header -->
+<div class="content-wrapper content" style="margin-top: 70px; margin-bottom: 60px">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2 tittelKH">
+                <div class="col-sm-6 tittel">
+                    <h5 class="m-0 text-dark">Khách hàng</h5>
+                </div>
+                <!-- tim kiem theo ten, sdt -->
+                <div class="col-sm-6">
+                    <div class="inpSearch">
+                        <input type="text" placeholder="Nhập mã hoặc số điện thoại" name="search" />
+                        <button class="btn btn-navbar" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="Table_wrapper">
+                <table class="table table-hover">
+                    <thead class="header">
+                        <tr>
+                            <th scope="col">Mã khách hàng</th>
+                            <th scope="col">Tên khách hàng</th>
+                            <th scope="col">Số điện thoại</th>
+                            <th scope="col">Địa chỉ</th>
+                            <th scope="col">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="khachhang">
+                    </tbody>
+                </table>
+            </div>
+            <div class="Pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);"><<</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);">1</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);">2</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);">3</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);">>></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.content-header -->

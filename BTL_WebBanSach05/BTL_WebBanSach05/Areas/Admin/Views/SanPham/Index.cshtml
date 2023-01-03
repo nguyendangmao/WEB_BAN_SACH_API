@@ -1,0 +1,361 @@
+﻿@using BTL_WebBanSach05.Models;
+@model List<SACH>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_sanpham.cshtml";
+}
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            GetTacGia();
+        });
+        function GetTacGia() {
+            $.ajax({
+                url: 'https://localhost:44357/api/tacgia',
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let option = '<option value="">Tác giả</option>';
+                    for (var i = 0; i < len; ++i) {
+                        option = option + '<option value="' + reponse[i].MATACGIA + '">' + reponse[i].TENTACGIA + '</option>';
+                    }
+                    document.getElementById('tacgia').innerHTML = option;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            GetNXB();
+        });
+        function GetNXB() {
+            $.ajax({
+                url: 'https://localhost:44357/api/nxb',
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let option = '<option value="">Nhà xuất bản</option>';
+                    for (var i = 0; i < len; ++i) {
+                        option = option + '<option value="' + reponse[i].MANXB + '">' + reponse[i].TENNXB + '</option>';
+                    }
+                    document.getElementById('NXB').innerHTML = option;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            GetTheLoai();
+        });
+        function GetTheLoai() {
+            $.ajax({
+                url: 'https://localhost:44357/api/theloai',
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let option = '<option value="">Thể loại</option>';
+                    for (var i = 0; i < len; ++i) {
+                        option = option + '<option value="' + reponse[i].MATHELOAI + '">' + reponse[i].TENTHELOAI + '</option>';
+                    }
+                    document.getElementById('Theloai').innerHTML = option;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            GetSach();
+        });
+        function GetSach() {
+            var id = 0;
+            $.ajax({
+                url: "https://localhost:44357/api/sach",
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let table = '<tr>';
+                    let t = 0;
+                    for (var i = 0; i < len; ++i) {
+                        id = reponse[i].MaSanPham;
+                        table = table +
+                            '<th scope="row">' + reponse[i].MaSanPham + '</th>' +
+                            '<td><img src="https://localhost:44357/Areas/Admin/Image/' + reponse[i].TenAnh +'" class="imgProduct"></td>' +
+                            '<td>' + reponse[i].TenSanPham + '</td>' +
+                            '<td>' + reponse[i].TenTacGia + '</td>' +
+                            '<td>' + reponse[i].TheLoai + '</td>' +
+                            '<td>' + reponse[i].NXB + '</td>' +
+                            '<td class="row">' +
+                            '<div class="col-sm-4 add"><a href="https://localhost:44357/Admin/SanPham/CTSanPham/' + reponse[i].MaSanPham + '"><i class="nav-icon fas fa-book"></i></a></div>' +
+                            '<div class="col-sm-4 edit"><a href="https://localhost:44357/Admin/SanPham/UpdateSP/' + reponse[i].MaSanPham + '"><i class="fas fa-edit"></i></a></div>' +
+                            '<div class="col-sm-4 delete"><i onclick=" deleteKhachHang(' + reponse[i].MaSanPham + ')" class="fas fa-trash-alt"></i></div></td></tr>';
+                    }
+                    document.getElementById('sach').innerHTML = table;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+    </script>
+
+    <script type="text/javascript">
+        function GetSachTG(maTG) {
+            $.ajax({
+                url: "https://localhost:44357/api/sach?maTG=" + maTG,
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let table = '<tr>';
+                    for (var i = 0; i < len; ++i) {
+                        table = table +
+                            '<th scope="row">' + reponse[i].MaSanPham + '</th>' +
+                            '<td><img src="https://localhost:44357/Areas/Admin/Image/' + reponse[i].TenAnh +'" class="imgProduct"></td>' +
+                            '<td>' + reponse[i].TenSanPham + '</td>' +
+                            '<td>' + reponse[i].TenTacGia + '</td>' +
+                            '<td>' + reponse[i].TheLoai + '</td>' +
+                            '<td>' + reponse[i].NXB + '</td>' +
+                            '<td class="row">' +
+                            '<div class="col-sm-4 add"><a href="https://localhost:44357/Admin/SanPham/CTSanPham/' + reponse[i].MaSanPham + '"><i class="nav-icon fas fa-book"></i></a></div>' +
+                            '<div class="col-sm-4 edit"><a href="https://localhost:44357/Admin/SanPham/UpdateSP/' + reponse[i].MaSanPham + '"><i class="fas fa-edit"></i></a></div>' +
+                            '<div class="col-sm-4 delete"><i onclick=" deleteKhachHang(' + reponse[i].MaSanPham + ')" class="fas fa-trash-alt"></i></div></td></tr>';
+                    }
+                    document.getElementById('sach').innerHTML = table;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+        $("#tacgia").change(function () {
+            GetSachTG($(this).val());
+        });
+    </script>
+
+    <script type="text/javascript">
+        function GetSachNXB(maNXB){
+            $.ajax({
+                url: "https://localhost:44357/api/sach?maNXB=" + maNXB,
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let table = '<tr>';
+                    for (var i = 0; i < len; ++i) {
+                        table = table +
+                            '<th scope="row">' + reponse[i].MaSanPham + '</th>' +
+                            '<td><img src="https://localhost:44357/Areas/Admin/Image/' + reponse[i].TenAnh +'" class="imgProduct"></td>' +
+                            '<td>' + reponse[i].TenSanPham + '</td>' +
+                            '<td>' + reponse[i].TenTacGia + '</td>' +
+                            '<td>' + reponse[i].TheLoai + '</td>' +
+                            '<td>' + reponse[i].NXB + '</td>' +
+                            '<td class="row">' +
+                            '<div class="col-sm-4 add"><a href="https://localhost:44357/Admin/SanPham/CTSanPham/' + reponse[i].MaSanPham + '"><i class="nav-icon fas fa-book"></i></a></div>' +
+                            '<div class="col-sm-4 edit"><a href="https://localhost:44357/Admin/SanPham/UpdateSP/' + reponse[i].MaSanPham + '"><i class="fas fa-edit"></i></a></div>' +
+                            '<div class="col-sm-4 delete"><i onclick=" deleteKhachHang(' + reponse[i].MaSanPham + ')" class="fas fa-trash-alt"></i></div></td></tr>';
+                    }
+                    document.getElementById('sach').innerHTML = table;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+        $("#NXB").change(function () {
+            GetSachNXB($(this).val());
+        });
+    </script>
+
+    <script type="text/javascript">
+        function GetSachTL(maTL) {
+            $.ajax({
+                url: "https://localhost:44357/api/sach?maTL=" + maTL,
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let table = '<tr>';
+                    for (var i = 0; i < len; ++i) {
+                        table = table +
+                            '<th scope="row">' + reponse[i].MaSanPham + '</th>' +
+                            '<td><img src="https://localhost:44357/Areas/Admin/Image/' + reponse[i].TenAnh +'" class="imgProduct"></td>' +
+                            '<td>' + reponse[i].TenSanPham + '</td>' +
+                            '<td>' + reponse[i].TenTacGia + '</td>' +
+                            '<td>' + reponse[i].TheLoai + '</td>' +
+                            '<td>' + reponse[i].NXB + '</td>' +
+                            '<td class="row">' +
+                            '<div class="col-sm-4 add"><a href="https://localhost:44357/Admin/SanPham/CTSanPham/' + reponse[i].MaSanPham + '"><i class="nav-icon fas fa-book"></i></a></div>' +
+                            '<div class="col-sm-4 edit"><a href="https://localhost:44357/Admin/SanPham/UpdateSP/' + reponse[i].MaSanPham + '"><i class="fas fa-edit"></i></a></div>' +
+                            '<div class="col-sm-4 delete"><i onclick=" deleteKhachHang(' + reponse[i].MaSanPham + ')" class="fas fa-trash-alt"></i></div></td></tr>';
+                    }
+                    document.getElementById('sach').innerHTML = table;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+        $("#Theloai").change(function () {
+            GetSachTL($(this).val());
+        });
+    </script>
+
+    <script type="text/javascript">
+        function GetSachSP(masp) {
+            $.ajax({
+                url: "https://localhost:44357/api/sach?masp=" + masp,
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let table = '<tr>';
+                    for (var i = 0; i < len; ++i) {
+                        table = table +
+                            '<th scope="row">' + reponse[i].MaSanPham + '</th>' +
+                            '<td><img src="https://localhost:44357/Areas/Admin/Image/' + reponse[i].TenAnh +'" class="imgProduct"></td>' +
+                            '<td>' + reponse[i].TenSanPham + '</td>' +
+                            '<td>' + reponse[i].TenTacGia + '</td>' +
+                            '<td>' + reponse[i].TheLoai + '</td>' +
+                            '<td>' + reponse[i].NXB + '</td>' +
+                            '<td class="row">' +
+                            '<div class="col-sm-4 add"><a href="https://localhost:44357/Admin/SanPham/CTSanPham/' + reponse[i].MaSanPham + '"><i class="nav-icon fas fa-book"></i></a></div>' +
+                            '<div class="col-sm-4 edit"><a href="https://localhost:44357/Admin/SanPham/UpdateSP/' + reponse[i].MaSanPham + '"><i class="fas fa-edit"></i></a></div>' +
+                            '<div class="col-sm-4 delete"><i onclick=" deleteKhachHang(' + reponse[i].MaSanPham + ')" class="fas fa-trash-alt"></i></div></td></tr>';
+                    }
+                    document.getElementById('sach').innerHTML = table;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+        $("input[name='masp']").change(function () {
+            GetSachSP($(this).val());
+        });
+    </script>
+
+    <script type="text/javascript">
+        function deleteKhachHang(id) {
+            if (confirm("Bạn có muốn xóa sản phẩm này không?") == true) {
+                var url = 'https://localhost:44357/api/sach?id=' + id
+                $.ajax({
+                    url: url,
+                    method: 'DELETE',
+                    contentType: 'json',
+                    dataType: 'json',
+                    error: function (response) {
+                        alert("Xóa không thành công");
+                    },
+                    success: function (reponse) {
+                        console.log(reponse);
+                        if (reponse == true) {
+                            alert("Xóa thành công");
+                        } else {
+                            alert("Xóa không thành công! Sách này đã được mua, bạn không thể xóa thông tin!");
+                        }
+                        GetSach();
+                    }
+                });
+            }
+        }
+    </script>
+}
+
+<!-- Content Header -->
+<div class="content-wrapper content" style="margin-top: 70px; margin-bottom: 70px;">
+    <div class="content-header" id="main_sp">
+        <div class="container-fluid">
+            <div class="row tittelSP">
+                <div class="col-sm-6">
+                    <h5 class="m-0 text-dark">Sản phẩm</h5>
+                </div>
+                <div class="col-sm-6">
+                    <a href="@Url.Action("addProduct")" class="btnAdd">Thêm sản phẩm</a>
+                </div>
+            </div>
+            <div class="row search">
+                <select name="cars" id="tacgia" class="cmbSearch">
+                </select>
+                <select name="cars" id="NXB" class="cmbSearch">
+                </select>
+                <select name="cars" id="Theloai" class="cmbSearch">
+                </select>
+                <div class="inpSearch">
+                    <input name="masp" type="text" placeholder="Nhập vào mã sách" />
+                    <button class="btn btn-navbar" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div id="main">
+
+            </div>
+            <div class="Table_wrapper">
+                <table class="table table-hover">
+                    <thead class="header">
+                        <tr>
+                            <th scope="col">Mã</th>
+                            <th scope="col">Ảnh</th>
+                            <th scope="col">Tên sách</th>
+                            <th scope="col">Tác giả</th>
+                            <th scope="col">Thể loại</th>
+                            <th scope="col">Nhà xuất bản</th>
+                            <th scope="col">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sach">
+                    </tbody>
+                </table>
+            </div>
+            <div class="Pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);"><<</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);">1</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);">2</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);">3</a></li>
+                    <li class="page-item"><a class="page-link" href="javascript:void(0);">>></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="main_item">
+
+    </div>
+</div>
+<!-- /.content-header -->
+<link href="~/Areas/Admin/Content/style/styleIndex.css" rel="stylesheet" />

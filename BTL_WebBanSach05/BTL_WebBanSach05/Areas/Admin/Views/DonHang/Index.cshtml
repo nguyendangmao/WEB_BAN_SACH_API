@@ -1,0 +1,123 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_donhang.cshtml";
+}
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            GetDH();
+        });
+        function GetDH() {
+            $.ajax({
+                url: 'https://localhost:44357/api/donhangapi',
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let table = '<tr>';
+                    for (var i = 0; i < len; ++i) {
+                        table = table +
+                            '<th scope="row">' + (i+1) + '</th>' +
+                            '<td>' + reponse[i].MaDonHang + '</td>' +
+                            '<td>' + reponse[i].NgayLapHD.split("T", 1) + '</td>' +
+                            '<td>' + reponse[i].MaKH + '</td>' +
+                            '<td><a href="https://localhost:44357/Admin/DonHang/CTDonHang?idDHang=' + reponse[i].MaDonHang + '" class="ChiTiet">Xem chi tiết</a></td></tr>';
+                    }
+                    document.getElementById('donhang').innerHTML = table;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+    </script>
+
+    <script type="text/javascript">
+        function GetDHSearch(id) {
+            $.ajax({
+                url: 'https://localhost:44357/api/donhangapi/' + id,
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let table = '<tr>';
+                    for (var i = 0; i < len; ++i) {
+                        table = table +
+                            '<th scope="row">' + (i+1) + '</th>' +
+                            '<td>' + reponse[i].MaDonHang + '</td>' +
+                            '<td>' + reponse[i].NgayLapHD + '</td>' +
+                            '<td>' + reponse[i].MaKH + '</td>' +
+                            '<td><a href="https://localhost:44357/Admin/DonHang/CTDonHang?idDHang=' + reponse[i].MaDonHang + '" class="ChiTiet">Xem chi tiết</a></td></tr>';
+                    }
+                    document.getElementById('donhang').innerHTML = table;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+        $("input[name='searchDH']").change(function () {
+            GetDHSearch($(this).val());
+        });
+    </script>
+}
+
+<link href="~/Areas/Admin/Content/style/styleDH.css" rel="stylesheet" />
+
+<div class="content-wrapper content" style="margin-top: 70px; margin-bottom: 60px">
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6 tittel">
+                    <h5 class="m-0 text-dark">Đơn hàng</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+            </div>
+            <div class="col-sm-3">
+                <input class="form-control form-control-navbar" type="search" placeholder="Tìm theo giá" aria-label="Search">
+            </div>
+            <div class="col-sm-3">
+                <input name="searchDH" class="form-control form-control-navbar" type="search" placeholder="Nhập mã đơn hàng hoặc mã khách" aria-label="Search">
+            </div>
+            <button class="btn btn-navbar" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+    <div>
+        <table class="content-table table-hover">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Mã đơn hàng</th>
+                    <th>Ngày lập đơn</th>
+                    <th>Mã khách hàng</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="donhang">
+            </tbody>
+        </table>
+    </div>
+    <div class="Pagination">
+        <ul class="pagination justify-content-center">
+            <li class="page-item"><a class="page-link" href="javascript:void(0);"><<</a></li>
+            <li class="page-item"><a class="page-link" href="javascript:void(0);">1</a></li>
+            <li class="page-item"><a class="page-link" href="javascript:void(0);">2</a></li>
+            <li class="page-item"><a class="page-link" href="javascript:void(0);">3</a></li>
+            <li class="page-item"><a class="page-link" href="javascript:void(0);">>></a></li>
+        </ul>
+    </div>
+</div>
+

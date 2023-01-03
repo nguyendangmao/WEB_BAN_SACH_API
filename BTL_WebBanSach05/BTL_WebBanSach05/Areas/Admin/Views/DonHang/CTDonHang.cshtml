@@ -1,0 +1,104 @@
+﻿
+@{
+    ViewBag.Title = "CTDonHang";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_donhang.cshtml";
+}
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            GetKH();
+        });
+        function GetKH() {
+            var id = 0;
+            $.ajax({
+                url: "https://localhost:44357/api/khachhangapi?idDH=" + @ViewBag.MaDH,
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let table = '<tr>';
+                    let t = 0;
+                    for (var i = 0; i < len; ++i) {
+                        t += reponse[i].giaban * reponse[i].SL;
+                        table = table +
+                            '<td>' + (i + 1) + '</td>' +
+                            '<td>' + reponse[i].TenSP + '</td>' +
+                            '<td>' + reponse[i].giaban + '</td>' +
+                            '<td>' + reponse[i].SL + '</td>' +
+                            '<td>' + (reponse[i].SL * reponse[i].giaban) + '</td></tr>';
+                    }
+
+                    table = table +
+                            '<tr class="active-row">' +
+                            '<td></td>' +
+                            '<td>Tổng tiền thanh toán</td>' +
+                            '<td></td>' +
+                            '<td></td>' +
+                            '<td>' + t + ' đ</td>' +
+                            '</tr>';
+
+                    document.getElementById('ct_dh').innerHTML = table;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+    </script>
+}
+
+<link href="~/Areas/Admin/Content/style/styleDH.css" rel="stylesheet" />
+
+<div class="content-wrapper content" style="margin-top: 70px; margin-bottom: 60px">
+    <!-- Content header -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6 tittel">
+                    <h5 class="m-0 text-dark">Chi tiết đơn hàng</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-left: 5%">
+        <div class="row">
+            <div class="col-md-3">
+                <i>Mã đơn hàng: @ViewBag.MaDH</i>
+            </div>
+            <div class="col-sm-4">
+                <i>Mã khách hàng: @ViewBag.MaKH</i>
+            </div>
+            <div class="col-sm-3">
+                <i>Số điện thoại: @ViewBag.SDTKh</i>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <i>Ngày bán: @ViewBag.ngayban.ToString("MM/dd/yyyy")</i>
+            </div>
+            <div class="col-sm-4">
+                <i>Tên khách hàng: @ViewBag.TenKH</i>
+            </div>
+            <div class="col-sm-3">
+                <i>Địa chỉ: @ViewBag.DiaChi</i>
+            </div>
+        </div>
+    </div>
+    <table class="content-table">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên sách</th>
+                <th>Giá bán</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody id="ct_dh">
+            
+        </tbody>
+    </table>
+</div>

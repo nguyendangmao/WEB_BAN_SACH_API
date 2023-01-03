@@ -1,0 +1,102 @@
+﻿
+@{
+    ViewBag.Title = "CTKhachHang";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout_customer.cshtml";
+}
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            GetKH();
+        });
+        function GetKH() {
+            $.ajax({
+                url: "https://localhost:44357/api/khachhangapi?idKH=" + @ViewBag.ID,
+                method: 'GET',
+                contentType: 'json',
+                dataType: 'json',
+                error: function (response) {
+                },
+                success: function (reponse) {
+                    const len = reponse.length;
+                    let table = '<tr>';
+                    for (var i = 0; i < len; ++i) {
+                        table = table +
+                            '<th scope="row">' + reponse[i].MaDonHang + '</th>' +
+                            '<td>' + reponse[i].NgayLapHD.split("T", 1) + '</td>' +
+                            '<td>Hoàn Thành</td>' +
+                            '<td><a href="https://localhost:44357/Admin/Customer/CTHoaDon_KH?idDH=' + reponse[i].MaDonHang +'" class="ChiTietHD">Xem chi tiết</a></td></tr>';
+                    }
+                    document.getElementById('listDH').innerHTML = table;
+                },
+                fail: function (response) {
+                }
+            });
+        }
+    </script>
+}
+    <link href="~/Areas/Admin/Content/style/styleChiTietKH.css" rel="stylesheet" />
+
+    <div class="content-wrapper content" style="margin-top: 70px; margin-bottom: 60px;">
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2 tittelKH">
+                    <div class="col-sm-6 tittel">
+                        <h5 class="m-0 text-dark">Thông tin khách hàng</h5>
+                    </div>
+                    <!-- tim kiem theo mã hóa đơn -->
+                    <div class="col-sm-6">
+                        <div class="inpSearch">
+                            <input type="text" placeholder="Nhập mã hóa đơn mua hàng" />
+                            <button class="btn btn-navbar" type="submit">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row Contact">
+                    <div class="col-sm-2 contactHeader">
+                        <p>Mã khách hàng: </p>
+                        <p>Tên khách hàng: </p>
+                        <p>Số điện thoại: </p>
+                        <p>Địa chỉ: </p>
+                    </div>
+                    <div class="col-sm-10">
+                        <p>@ViewBag.ID</p>
+                        <p>@ViewBag.Ten</p>
+                        <p>@ViewBag.SDT</p>
+                        <p>@ViewBag.DiaChi</p>
+                    </div>
+                </div>
+                <div class="row mb-2 tittelKH">
+                    <div class="col-sm-6 tittel">
+                        <h5 class="m-0 text-dark">Lịch sử mua hàng</h5>
+                    </div>
+                </div>
+                <div class="Table_wrapper">
+                    <table class="table table-hover">
+                        <thead class="header">
+                            <tr>
+                                <th scope="col">Mã hóa đơn</th>
+                                <th scope="col">Thời gian</th>
+                                <th scope="col">Trạng thái</th>
+                                <th scope="col">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="listDH">
+                            
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row back">
+                    <div class="col-sm-6">
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="@Url.Action("Index")" class="btnPro">Back</a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- /.content-header -->
